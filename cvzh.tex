@@ -1,0 +1,261 @@
+\documentclass[a4paper]{article}
+\usepackage{xeCJK}
+\usepackage{titlesec}
+
+\usepackage{xcolor}
+
+\usepackage{tabularx}
+\usepackage[top=4.5cm,bottom=0cm,left=5cm,right=2cm]{geometry}
+% colours that I used in this CV
+\definecolor{maincolor}{RGB}{0,128,128}
+\definecolor{workplace}{HTML}{0395DE}
+\definecolor{sidesections}{HTML}{0395DE}
+\definecolor{maingray}{HTML}{B9B9B9}
+\definecolor{bodycolor}{RGB}{26,26,26}
+%====================================
+%\usepackage[quiet]{fontspec}
+\usepackage[math-style=TeX]{unicode-math}
+
+
+%字体
+
+\setmainfont
+[Mapping=tex-text, Color=textcolor,
+BoldFont=texgyreheros-bold.otf,
+ItalicFont=texgyreheros-italic.otf,
+BoldItalicFont=texgyreheros-bolditalic.otf
+]
+{texgyreheros-regular.otf}
+\setmathfont{texgyreheros-regular.otf}
+\defaultfontfeatures{Mapping=tex-text}
+\setCJKmainfont   %cmd 输出 fc-list :lang=zh-cn |sort
+[Mapping=tex-text, Color=textcolor,BoldFont={Hiragino Sans GB W6.ttf}, ItalicFont={AdobeKaitiStd-Regular.otf}]{Hiragino Sans GB W3.otf}
+\newCJKfontfamily\dizhifont
+[Mapping=tex-text, Color=textcolor,BoldFont={Hiragino Sans GB W6.ttf}, ItalicFont={AdobeKaitiStd-Regular.otf}]{Hiragino Sans GB W6.ttf}
+%==============================
+\usepackage{xunicode}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{tikzpagenodes}
+\usepackage{hyperref}
+\usetikzlibrary{positioning}
+\usepackage{bbding}
+\usepackage{ wasysym }
+\usepackage{fontawesome}
+\usepackage{tgadventor}
+\usepackage{multicol}
+%===============================模块设置====
+\titleformat{\section}         % Customise the \section command 
+{\Large\scshape\raggedright\color{sidesections}} % Make the \section headers large (\Large),
+% small capitals (\scshape) and left aligned (\raggedright)
+{}{0em}                      % Can be used to give a prefix to all sections, like 'Section ...'
+{}                           % Can be used to insert code before the heading
+% \titlespacing*{<command>}{<left>}{<before-sep>}{<after-sep>}
+\titlespacing*{\section}{0pt}{1pt}{2pt}
+\titleformat{\subsection}
+{\large\scshape\raggedright}
+{}{0em}
+{}
+
+\newcommand{\datedsection}[2]{ %
+	\section[#1]{ #1 \hfill #2}%
+}
+\newcommand{\datedsubsection}[2]{ %
+	\subsection[#1]{#1 \hfill #2}%
+}
+
+\newcommand{\pageheader}[8]{\selectfont %
+	% the rectangle on the top of the page   
+	\begin{tikzpicture}[remember picture,overlay]
+	\node (header) [shape=rectangle, fill=maincolor, minimum height=5cm, minimum width=\paperwidth, anchor=north west] at (current page.north west) {};
+	
+	% the full name
+	\node(text) [anchor=south, xshift=1.5cm] (name) at (header) {%
+		\fontsize{40pt}{62pt}\color{white}\selectfont\dizhifont%
+		{#1}{#2}
+	};
+	% the rest of the information
+	\node(text) [anchor=north] (contact) at (name.south) {%
+		\fontsize{10pt}{16pt}\color{white}\selectfont%
+		{ \faEnvelope~ #4 ~|~  \phone~ #3 ~|~ ~\faGithub ~ #5 ~|~ ~\faLinkedinSquare ~ #6}
+	};
+	\node(text) [anchor=north] (addrbirth) at (contact.south) {%
+		\fontsize{10pt}{16pt}\color{white}\selectfont%
+		{\faHome ~ \dizhifont #7 ~|~ \faBirthdayCake  ~ #8}
+	};
+	
+	% the picture
+	\node[xshift=2.5cm, yshift=-2.2cm] (mypic) at (header.west)
+	{\includegraphics[width=.28\textwidth]{nikola_cv_photo.png}};    
+	\end{tikzpicture}
+}
+
+% for the side bar
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1cm}
+\setlength{\TPVertModule}{1cm}
+\newenvironment{aside}{%
+	\let\oldsection\section
+	\renewcommand{\section}[1]{
+		\par\vspace{\baselineskip}{\Large\color{sidesections} ##1}
+	}
+	\begin{textblock}{3}(1, 6)
+		\begin{flushleft}
+			\obeycr
+		}{%
+			\restorecr
+		\end{flushleft}
+	\end{textblock}
+	\let\section\oldsection
+	
+}
+% Command for printing skill progress bars; max level is 3; non-integers allowed
+\newcommand{\skills}[1]{%
+	\begin{tikzpicture}[remember picture, node distance=5cm]
+	\foreach [count=\i] \x/\y in {#1}{
+		\fill[fill=maingray] (0,\i) rectangle (3,\i+0.2);
+		\fill[fill=maincolor](0,\i) rectangle (\y,\i+0.2);
+		\node [above right] at (0,\i+0.2) {\x};
+	}\end{tikzpicture}%
+}
+
+% the entries for education/work
+\setlength{\tabcolsep}{0pt}
+\newenvironment{entrylist}{%
+	\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
+	}{%
+	\end{tabular*}
+}
+
+\renewcommand{\bfseries}{\color{maincolor}}
+\newcommand{\entry}[4]{%
+	\parbox[t]{2cm}{ #1}\parbox[t]{12.8cm}{%
+		\hfill #2\\%
+		\hspace*{\fill}%
+		{\footnotesize\color{workplace}#3 }\\%
+		\vspace{1pt} #4%  \vspace{\parsep} (ili neki broj)<- to se moze dodati pre #4 ako cu da ubacim vertical space
+	}\\}
+
+\setlength{\tabcolsep}{0pt}
+\newenvironment{aplist}{%
+	\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
+	}{%
+	\end{tabular*}
+}
+
+\newcommand{\apentry}[2]{%
+	\parbox[t]{2cm}{ #1}\parbox[t]{12.8cm}{%
+		\textbf{\color{black} #2\\}%
+	}\\}
+
+% remove page numbers from the document
+\pagenumbering{gobble}
+
+\newenvironment{absolutelynopagebreak}
+{\par\nobreak\vfil\penalty0\vfilneg
+	\vtop\bgroup}
+{\par\xdef\tpd{\the\prevdepth}\egroup
+	\prevdepth=\tpd}
+
+\begin{document}
+\thispagestyle{empty}	
+\pageheader{周~}{杰伦}
+{+381653509370}
+{\href{mailto:nikola.n.milev@gmail.com}{nikola.n.milev@\\gmail.com}}
+{ \href{https://github.com/NikolaMilev}{/NikolaMilev}} 	
+{ \href{https://www.linkedin.com/in/nikola-n-milev/}{/in/nikola-n-milev/}}
+{上海，闸北区，上海大学}
+%{ Vojislava Ilica, 87, Belgrade }
+{12.05.1993.}
+
+
+\begin{aside}
+	\section{语言}
+	% 3 is max
+	\skills{{普通话/3}, {English/3}}
+	~
+	~
+	\section{编程语言}
+	% 3 is max
+	\skills{{OpenSSL/1.3}, {Flex/1.5}, {Bison/1.5}, {Eclipse/2}, {Intellij IDEA/2}, {Git/2}, {CSS/2}, {HTML/2}, {LaTeX/2}, {GNU Linux/3},{Haskell/2.3},{Python/2.3}, {C++/2.5},{Java/3}, {C/3}}
+	\end {aside}
+	~
+	~\\
+	
+	
+\section{实习经历}
+\begin{entrylist}
+	\entry
+	{10/2016~\textemdash \\present}
+	{Segula Technologies, 法国}
+	{计算机工程师}
+	{使用ADAMS 研究、建模和优化电子汽车传动链的NVH(Noise and Vibration Harshnee)效应}
+	\entry
+	{07/2016~\textemdash \\10/2016}
+	{Intern}
+	{ESDL (Electronics Systems Design Limited), Malta}
+	{Implemented a server RaspberryPi with UART communication. Implemented in C, using OpenSSL}
+	\entry
+	{05/2016}
+	{Intern}
+	{sTech d.o.o. Belgrade, member of UNIQA Group Austria}
+	{Worked within three teams in order to get introduced to the system used for processing insurance policies. }
+\end{entrylist}
+\section{教育经历}
+\begin{entrylist}
+	\entry
+	{2016~\textemdash \\present}
+	{机械硕士学位，不拉不拉专业}
+	{某某系，不拉不拉大学}
+	{现在在学习机器学习，编程，自动化不知道等等，GPA 10/10，测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测}
+	\entry
+	{2012~\textemdash \\2016}
+	{Bachelor's Degree in Computer Science}
+	{Faculty of Mathematics, University of Belgrade}
+	{Passed many courses that covered important topics such as algorithms, object oriented programming, Unix system programming, etc. Graduated as one of the best students in the generation. GPA 9.61 out of 10.}
+	\entry
+	{2008~\textemdash \\2012}
+	{High School}
+	{Grammar School, Valjevo}
+	{Finished with several awards for good students. Was a member of the school choir and took part in various music manifestations.}
+\end{entrylist}
+
+\section{个人荣誉}
+\begin{aplist}
+	\apentry{2016}{Dositeja scholarship: a scholarship awarded to 800 best students of undergraduate studies in Serbia.}
+	\apentry{10/2016}{Brand New Engineers Hackathon, team Schwifty, 3rd place.}
+\end{aplist}
+%\section{Projects}
+%\bodyfont
+%\begin{aplist}
+%\apentry{Origami \\simulator}{A simulation for origami representation in 3D, with basic paper folding allowed. (a team project written in C++ using STL and Qt libraries; implemented the data structure for an origami figure, serialization and several smaller tasks)}
+%\end{aplist}
+
+\section{项目经验}
+\setlength{\tabcolsep}{6pt}
+\begin{tabularx}{1.07\textwidth}{XX}
+	\textbf{不知道什么项目:} A small program that compiles a small subset of Pascal into a LaTeX flowchart, written in C++ using Flex and Bison. &
+	\textbf{什么什么模拟器:} 一个团队项目，用过C++ 和
+	STL 和QT 什么什么。完成了一个数据结构，
+	什么什么什么什么的小任务。 \\
+	\textbf{机器学习助手:} JAVA 写的一个什么什么助手 &
+	\textbf{我也不知道怎么翻译:} JAVA写的一个很厉害的软件 \\
+\end{tabularx}
+~
+\section{Interests}
+\begin{flushleft} 
+	\begin{tabularx}{\textwidth}{XXX}
+		
+		\faBicycle ~骑行 &
+		\faLifeRing ~~游泳 &
+		\faUniversity ~~观光 \\
+		\faMusic ~~~音乐 &
+		\faPlane ~~~旅游 &
+		\faCutlery ~~~烹饪 \\
+		\faKeyboardO ~~编程 &
+		\faGamepad ~~电子游戏 &
+		\faTelevision ~~电影和电视
+		
+	\end{tabularx}
+\end{flushleft}
+\end{document}
